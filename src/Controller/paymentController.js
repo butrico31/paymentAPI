@@ -37,7 +37,8 @@ const payBoleto = async (req, res) => {
 
     return res.json({
       boletoLink: paymentIntent.next_action.boleto_display_details.pdf,
-      boletoNumber: paymentIntent.next_action.boleto_display_details.number
+      boletoNumber: paymentIntent.next_action.boleto_display_details.number,
+      paymentId: paymentIntent.id,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -99,31 +100,32 @@ const verifyPayment = async (req, res) => {
   }
 };
 
-const payCheckout = async (req, res) => {
-  try {
-    const session = await stripe.checkout.sessions.create({
-      line_items: [
-        {
-          price: 'price_1QtAfUKgJMpML8VgcVEKBzPV',
-          quantity: 1,
-        },
-      ],
-      mode: 'payment',
-      success_url: 'http://localhost:3000/auth/success.html',
-      cancel_url: 'http://localhost:3000/auth/cancel.html',
+
+const refund = async (req, res) => {
+  const { paymentId } = req.body;
+
+  const paymentIntent = await stripe.paymentIntents.retrieve(paymentId);
+
+  const charge = paymentIntent.latest_charge;
+  
+  try{
+    stripe.refunds.create({
+      charge,
     });
 
-    res.json({ success: true, sessionUrl: session.url });
-  } catch (error) {
-    console.error('Erro ao criar sessão de checkout:', error);
-    res.status(500).json({ success: false, error: error.message });
+    return res.status(200).json({
+      success: true,
+      message: 'Reembolso bem-sucedido!',
+    });
+  }
+  catch(error){
+    return res.status(500).json({ success: false, error: error.message });
   }
 };
-
 
 module.exports = {
   payBoleto,
   payCard,
-  payCheckout,
   verifyPayment,
+  refund
 }

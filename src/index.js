@@ -27,7 +27,7 @@ mongoose.connect(process.env.CONN);
 
 
 
-app.use("/auth", authRoutes);
+app.use("/", authRoutes);
 
 
 
