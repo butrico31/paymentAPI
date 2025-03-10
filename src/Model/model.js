@@ -10,4 +10,14 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model("User", userSchema);
 
-module.exports = User;
+const wishSchema = new mongoose.Schema({
+  
+  user: String ({ref:User}),
+})
+
+WishList = mongoose.model("WishList", wishSchema);
+
+module.exports = {
+  User, 
+  wishSchema,
+};
