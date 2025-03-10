@@ -17,8 +17,8 @@ router.post('/payBoleto', payment.payBoleto);
 
 router.post('/payCard', payment.payCard);
 
-router.post('/payCheckout', payment.payCheckout);
-
 router.get('/verify', payment.verifyPayment);
+
+router.post('/refund', payment.refund);
 
 module.exports = router;
