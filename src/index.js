@@ -5,7 +5,7 @@ const cors = require("cors");
 const authRoutes = require("./Routes/authRoutes");
 const express = require("express");
 const auth = require("./middlewares/authMiddleware");
-const helmet = require("helmet");
+const paymentRoutes = require("./Routes/paymentRoutes");
 
 
 dotEnv.config();
@@ -25,11 +25,11 @@ app.use(cors(corsOptions));
 
 mongoose.connect(process.env.CONN);
 
+app.use(auth.autenticar);
 
 
-app.use("/", authRoutes);
+app.use("/auth", authRoutes);
 
-
-
+app.use("/pay", paymentRoutes);
 
 app.listen(process.env.PORT);
